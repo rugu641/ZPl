@@ -1,25 +1,30 @@
 const express = require("express");
-const chalk = require("chalk");
 const morgan = require("morgan");
-const debug = require("debug")("app");
 const mysqlConnection = require("./connection");
 const bodyParser = require("body-parser");
-const playerRoutes = require("./routes/player");
+const playerRoutes = require("./routes/playerRoutes");
+const teamRoutes = require("./routes/teamRoutes");
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(morgan("tiny"));
 app.use(bodyParser.json());
-app.use("/player", playerRoutes);
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use("/players", playerRoutes);
+app.use("/teams", teamRoutes);
 
 app.get("/", (req, res) => {
-    res.send("Hello from zpm");
+    res.sendFile("index");
 });
-app.get("/home", (req, res) => {
-    res.send("Hello AMan");
+
+app.get("/about", (req, res) => {
+    res.sendFile("public/about");
 });
 
 app.listen(5000, () => {
-    debug(`listening on port ${chalk.green(port)}`);
+    console.log(`listening on port ${(port)}`);
 });
