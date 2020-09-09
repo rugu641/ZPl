@@ -21,9 +21,9 @@ app.get("/", (req, res) => {
     res.sendFile("index");
 });
 
-app.get("/about", (req, res) => {
-    res.sendFile("public/about");
-});
+// app.get("/about", (req, res) => {
+//     res.sendFile("public/about", {root: __dirname});
+// });
 
 app.listen(5000, () => {
     console.log(`listening on port ${(port)}`);
