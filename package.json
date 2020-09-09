@@ -1,0 +1,36 @@
+{
+  "name": "zpl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "DEBUG=app & nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rugu641/ZPl.git"
+  },
+  "author": "Rugved, Aman, Gautam",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rugu641/ZPl/issues"
+  },
+  "homepage": "https://github.com/rugu641/ZPl#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.4"
+  },
+  "nodemonConfig":{
+    "restartable":"rs",
+    "ignore":["node_modules/**/node_modules"],
+    "delay":"2500",
+    "env":{
+      "NODE_ENV":"development",
+      "PORT": 5000
+    }
+  }
+}
