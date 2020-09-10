@@ -1,72 +1,68 @@
 const express = require('express');
 const router = express.Router();
-const mysqlConnection = require('../connection');
+const knex = require('../connection');
 
 //add team
 router.post('/', (req, res) => {
     const data = req.body;
-    console.log(data);
+    
+    knex('zpl.team').insert([data])
+    .then(() => {
+        res.json({"success":"Team added successfully."});
+    })
+    .catch((err)=> {console.log(err); throw err});
 
-    const sql = "INSERT INTO zpl.team (name,owner,coach,homeGround,numberOfStaff) VALUES ('" + data.name + "','"+data.owner+"','"+data.coach+"','"+data.homeGround+"','"+data.numberOfStaff+"')";
-    mysqlConnection.query(sql, (err,rows, fields) => {
-        if(!err)
-            res.json({"success":"Team added successfully."});
-        else
-            console.log(err);
-    });
 });
 
-//Return the info of all teams
+//Returning the info of all teams
 router.get('/', (req, res) => {
-    mysqlConnection.query("SELECT * FROM team", (err, rows, fields) => {
-        if(!err)
-            res.json(rows);
-        else
-            console.log(err);
-    });
+
+    knex.select('*').from('zpl.team')
+    .then((rows) => {
+        res.json(rows);
+    })
+    .catch((err) => { console.log(err); throw err});
+
 });
 
+//Updating captain and number of players
 router.put('/:teamId', (req, res) => {
     const data = req.body;
     let count;
 
-    mysqlConnection.query(`SELECT COUNT(name) AS count FROM zpl.player WHERE team_id=${req.params.teamId}`, (err, rows, fields) => {
-        if(!err){
-            count = rows[0].count;
-        }
-        else
-            console.log(err);
-
-        mysqlConnection.query(`UPDATE zpl.team SET captain='${data.captainName}', numberOfPlayers='${count}' WHERE id=${req.params.teamId}`, (err, rows, fields) => {
-            if(!err)
-                res.json({"success": "Succesfully updated the captain and number of players"});
-            else
-                console.log(err);
-        });
-    });
+    knex('zpl.player').count('name', {as:'count'}).where('team_id', req.params.teamId)
+    .then((rows) => {
+        count = rows[0].count;
+        // console.log(rows);
+        knex('zpl.team').where('id', req.params.teamId).update({captain: data.captainName, numberOfPlayers: count})
+        .then(() => {
+            res.json({"success": "Succesfully updated the captain and number of players"});
+        })
+        .catch((err) => { console.log(err); throw err});
+    })
+    .catch((err) => { console.log(err); throw err});
 
 });
 
-//Returning the info of given player
+//Returning the info of given team
 router.get('/:teamId', (req, res) => {
-    mysqlConnection.query(`SELECT * FROM team Where id=${req.params.teamId}`, (err, rows, fields) => {
-        if(!err)
-            res.json(rows);
-        else
-            console.log(err);
-    });
+    knex.select('*').from('zpl.team').where('id', req.params.teamId)
+    .then((rows) => {
+        res.json(rows);
+    })
+    .catch((err) => { console.log(err); throw err});
 });
 
 //Returning the info of all players for a given team
 router.get('/:teamId/players', (req, res) => {
     const data = req.body;
-    // console.log(data);
-    mysqlConnection.query(`SELECT * FROM player Where team_id=${req.params.teamId}`, (err, rows, fields) => {
-        if(!err)
-            res.json(rows);
-        else
-            console.log(err);
-    });
+    
+    knex.select('*').from('zpl.player').where('team_id', req.params.teamId)
+    .then((rows) => {
+        res.json(rows);
+    })
+    .catch((err) => { console.log(err); throw err});
+    
 });
 
 module.exports = router;

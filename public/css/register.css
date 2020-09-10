@@ -47,6 +47,10 @@ section::before{
   opacity:0;
 }
 
+#team {
+  height: 500px;
+}
+
 h1{
 	margin:0;
   margin-top:5px;
