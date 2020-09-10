@@ -7,7 +7,6 @@ router.post('/', (req, res) => {
     const data = req.body;
     console.log(data);
 
-    // const sql = `INSERT INTO zpl.player (id, name, age, role, country, battingStyle, bowlingStyle, matchesPlayed) VALUES (${data.id}, ${data.name}, ${data.age}, ${data.role} ,${data.country}, ${data.battingStyle}, ${data.bowlingStyle}, ${data.matchesPlayed})`;
     const sql = "INSERT INTO zpl.player (name,age,role,country,battingStyle,bowlingStyle,matchesPlayed) VALUES ('" + data.name + "','"+data.age+"','"+data.role+"','"+data.country+"','"+data.battingStyle+"','"+data.bowlingStyle+"','"+data.matchesPlayed+"')";
     mysqlConnection.query(sql, (err,rows, fields) => {
         if(!err)
@@ -40,7 +39,7 @@ router.get('/:playerId', (req, res) => {
 //Transfering or associating a player with a team
 router.put('/:playerId', (req, res) => {
     const data = req.body;
-    // console.log(data);
+    
     mysqlConnection.query(`UPDATE zpl.player SET team_id=${data.teamId} WHERE id=${req.params.playerId}`, (err, rows, fields) => {
         if(!err)
             res.json({"success":true});
